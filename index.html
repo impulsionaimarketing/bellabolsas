@@ -106,6 +106,11 @@ footer p+p{margin-top:8px;color:#b98a9a}
 
 /* botão fixo mobile */
 .sticky{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(255,248,244,.98) 70%,rgba(255,248,244,0))}
+.toast{position:fixed;left:12px;bottom:84px;z-index:60;max-width:min(320px,calc(100vw - 24px));display:flex;align-items:center;gap:10px;background:#fff;color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--wa);border-radius:12px;padding:10px 14px;box-shadow:0 10px 28px rgba(0,0,0,.25);font-size:.85rem;line-height:1.3;transform:translateX(-120%);opacity:0;transition:transform .45s ease,opacity .45s ease;pointer-events:none}
+.toast.on{transform:none;opacity:1}
+.toast .av{flex:none;width:34px;height:34px;border-radius:50%;background:var(--wa);color:#04210f;font-weight:800;display:grid;place-items:center}
+.toast small{display:block;color:var(--muted);font-size:.72rem}
+@media(min-width:720px){.toast{bottom:20px;left:20px}}
 .sticky .btn{width:100%;padding:15px}
 .sticky{transform:translateY(110%);transition:transform .3s ease;pointer-events:none}
 .sticky.show{transform:none;pointer-events:auto}
@@ -148,6 +153,9 @@ const CONFIG = {
   instagram: "",      // ex.: "https://instagram.com/belabolsas"
   whatsappLoja: "",   // ex.: "https://wa.me/5575999999999"
   // Fotos: coloque o caminho da imagem em "img" (ex.: "img/bianca.jpg"). Sem foto, aparece um ícone.
+  // Popup "fulano entrou no grupo": coloque aqui SOMENTE nomes de pessoas que realmente entraram
+  // (ex.: ["Maria S.", "Joana P."]). Enquanto a lista estiver vazia, o popup não aparece.
+  entraram: [],
   produtos: [
     {nome:"Bianca", preco:"135,00", img:""},
     {nome:"Alice", preco:"70,00", img:""},
@@ -285,6 +293,8 @@ const CONFIG = {
   <p>Desconto e cupom válidos para quem estiver no grupo VIP, enquanto durarem os estoques.</p>
 </footer>
 
+<div class="toast" id="toast" role="status" aria-live="polite"><div class="av" id="toastAv"></div><div><b id="toastNome"></b> entrou no grupo VIP<small>Garanta o seu lugar também</small></div></div>
+
 <div class="sticky"><a class="btn js-wa" href="#" data-src="sticky"><svg class="wa-i"></svg>QUERO ENTRAR NO GRUPO VIP</a></div>
 
 <script>
@@ -317,6 +327,21 @@ document.getElementById('redes').innerHTML=r.length?' · '+r.join(' · '):'';
   if(!hero||!st)return;
   const f=()=>st.classList.toggle('show',hero.getBoundingClientRect().bottom<0);
   addEventListener('scroll',f,{passive:true});f();
+})();
+
+// popup de quem entrou (só roda se CONFIG.entraram tiver nomes reais)
+(function(){
+  const nomes=(CONFIG.entraram||[]).filter(Boolean);
+  if(!nomes.length)return;
+  const t=document.getElementById('toast'),n=document.getElementById('toastNome'),a=document.getElementById('toastAv');
+  let i=0;
+  function mostra(){
+    const nome=nomes[i++%nomes.length];
+    n.textContent=nome;a.textContent=nome.trim()[0].toUpperCase();
+    t.classList.add('on');
+    setTimeout(()=>t.classList.remove('on'),5000);
+  }
+  setTimeout(()=>{mostra();setInterval(mostra,11000)},6000);
 })();
 
 // contagem regressiva
