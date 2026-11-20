@@ -107,6 +107,8 @@ footer p+p{margin-top:8px;color:#b98a9a}
 /* botão fixo mobile */
 .sticky{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(255,248,244,.98) 70%,rgba(255,248,244,0))}
 .sticky .btn{width:100%;padding:15px}
+.sticky{transform:translateY(110%);transition:transform .3s ease;pointer-events:none}
+.sticky.show{transform:none;pointer-events:auto}
 
 @media(min-width:720px){
   body{padding-bottom:0;padding-top:42px}
@@ -292,6 +294,14 @@ const r=[];
 if(CONFIG.instagram)r.push(`<a href="${CONFIG.instagram}">Instagram</a>`);
 if(CONFIG.whatsappLoja)r.push(`<a href="${CONFIG.whatsappLoja}">WhatsApp da loja</a>`);
 document.getElementById('redes').innerHTML=r.length?' · '+r.join(' · '):'';
+
+// botão fixo: só aparece depois da primeira seção
+(function(){
+  const hero=document.querySelector('.hero'),st=document.querySelector('.sticky');
+  if(!hero||!st)return;
+  const f=()=>st.classList.toggle('show',hero.getBoundingClientRect().bottom<0);
+  addEventListener('scroll',f,{passive:true});f();
+})();
 
 // contagem regressiva
 const alvo=new Date(CONFIG.liberacao).getTime();
