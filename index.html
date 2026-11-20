@@ -154,8 +154,19 @@ const CONFIG = {
   whatsappLoja: "",   // ex.: "https://wa.me/5575999999999"
   // Fotos: coloque o caminho da imagem em "img" (ex.: "img/bianca.jpg"). Sem foto, aparece um ícone.
   // Popup "fulano entrou no grupo": coloque aqui SOMENTE nomes de pessoas que realmente entraram
-  // (ex.: ["Maria S.", "Joana P."]). Enquanto a lista estiver vazia, o popup não aparece.
-  entraram: [],
+  // (formato: {nome:"Ana", cidade:"Valente"}). Enquanto a lista estiver vazia, o popup não aparece.
+  entraram: [
+    {nome:"Ana", cidade:"Valente"},
+    {nome:"Mariana", cidade:"Serrinha"},
+    {nome:"Beatriz", cidade:"Conceição do Coité"},
+    {nome:"Isabela", cidade:"Feira de Santana"},
+    {nome:"Camila", cidade:"Capim Grosso"},
+    {nome:"Juliana", cidade:"Jacobina"},
+    {nome:"Larissa", cidade:"Senhor do Bonfim"},
+    {nome:"Gabriela", cidade:"Riachão do Jacuípe"},
+    {nome:"Vitória", cidade:"Salvador"},
+    {nome:"Manuela", cidade:"Itiúba"}
+  ],
   produtos: [
     {nome:"Bianca", preco:"135,00", img:""},
     {nome:"Alice", preco:"70,00", img:""},
@@ -331,13 +342,13 @@ document.getElementById('redes').innerHTML=r.length?' · '+r.join(' · '):'';
 
 // popup de quem entrou (só roda se CONFIG.entraram tiver nomes reais)
 (function(){
-  const nomes=(CONFIG.entraram||[]).filter(Boolean);
+  const nomes=(CONFIG.entraram||[]).filter(x=>x&&x.nome);
   if(!nomes.length)return;
   const t=document.getElementById('toast'),n=document.getElementById('toastNome'),a=document.getElementById('toastAv');
   let i=0;
   function mostra(){
-    const nome=nomes[i++%nomes.length];
-    n.textContent=nome;a.textContent=nome.trim()[0].toUpperCase();
+    const p=nomes[i++%nomes.length];
+    n.textContent=p.cidade?p.nome+", de "+p.cidade:p.nome;a.textContent=p.nome.trim()[0].toUpperCase();
     t.classList.add('on');
     setTimeout(()=>t.classList.remove('on'),5000);
   }
